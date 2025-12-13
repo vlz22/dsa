@@ -1,0 +1,95 @@
+#include <stdio.h>
+
+#define MAX_LENGTH 100
+
+int stringLength(const char str[]);
+int containsPattern(const char str[], const char pattern[]);
+void replacePattern(char str[], const char pattern[], const char replace[]);
+
+int stringLength(const char str[])
+{
+    int length = 0;
+    while (str[length] != '\0')
+    {
+        length++;
+    }
+    return length;
+}
+
+int containsPattern(const char str[], const char pattern[])
+{
+    int i, j;
+    for (i = 0; str[i] != '\0'; i++)
+    {
+        j = 0;
+        while (pattern[j] != '\0' && str[i + j] == pattern[j])
+        {
+            j++;
+        }
+        if (pattern[j] == '\0')
+
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void replacePattern(char str[], const char pattern[], const char replace[])
+{
+    int patternIndex = containsPattern(str, pattern);
+
+    while (patternIndex != -1)
+    {
+        int i;
+        int strLen = stringLength(str);
+        int patLen = stringLength(pattern);
+        int repLen = stringLength(replace);
+
+        for (i = strLen; i >= patternIndex + patLen; i--)
+        {
+            str[i + repLen - patLen] = str[i];
+        }
+
+        for (i = 0; i < repLen; i++)
+        {
+            str[patternIndex + i] = replace[i];
+        }
+
+        patternIndex = containsPattern(str, pattern);
+
+    }
+}
+
+int main(void)
+{
+    char mainString[MAX_LENGTH];
+    char pattern[MAX_LENGTH];
+    char replace[MAX_LENGTH];
+
+    printf("Enter the main string: ");
+    fgets(mainString, MAX_LENGTH, stdin);
+
+    printf("Enter the pattern to replace: ");
+    fgets(pattern, MAX_LENGTH, stdin);
+
+    printf("Enter the replacement string: ");
+    fgets(replace, MAX_LENGTH, stdin);
+
+    mainString[stringLength(mainString) - 1] = '\0';
+    pattern[stringLength(pattern) - 1] = '\0';
+    replace[stringLength(replace) - 1] = '\0';
+
+    if (containsPattern(mainString, pattern) != -1)
+    {
+        replacePattern(mainString, pattern, replace);
+        printf("Pattern found and replaced:\n%s\n", mainString);
+    }
+    else
+    {
+
+        printf("Pattern not found in the main string.\n");
+    }
+
+    return 0;
+}

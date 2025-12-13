@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 5
+
+int stack[MAX_SIZE];
+int top = -1;
+int item;
+int flag = 1;
+
+void push(void);
+void pop(void);
+void display(void);
+
+int main(void)
+{
+    int choice;
+
+    printf("\n-------- STACK OPERATIONS --------\n");
+    printf("1. Push\n");
+    printf("2. Pop\n");
+    printf("3. Display\n");
+    printf("4. Exit\n");
+
+    while (1)
+    {
+        printf("\nEnter your choice: ");
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Exiting.\n");
+            return 1;
+        }
+
+        switch (choice)
+        {
+            case 1:
+                push();
+                break;
+            case 2:
+                pop();
+                if (flag)
+                    printf("The popped element: %d\n", item);
+                break;
+            case 3:
+                display();
+
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
+void push(void)
+{
+    if (top == (MAX_SIZE - 1))
+    {
+        printf("Stack Overflow.\n");
+        flag = 0;
+    }
+    else
+    {
+        printf("Enter the element to be inserted: ");
+        if (scanf("%d", &item) != 1) {
+            printf("Invalid input. Aborting push.\n");
+            flag = 0;
+            return;
+        }
+        top = top + 1;
+        stack[top] = item;
+        flag = 1;
+
+        printf("Pushed %d onto stack.\n", item);
+    }
+}
+
+void pop(void)
+{
+    if (top == -1)
+    {
+        printf("Stack Underflow.\n");
+        flag = 0;
+    }
+    else
+    {
+        item = stack[top];
+        top = top - 1;
+        flag = 1;
+    }
+}
+
+void display(void)
+{
+    int i;
+
+    if (top == -1)
+    {
+        printf("Stack is empty.\n");
+    }
+    else
+    {
+        printf("Stack elements (top to bottom):\n");
+
+        for (i = top; i >= 0; i--)
+        {
+            printf("%d\n", stack[i]);
+        }
+    }
+}

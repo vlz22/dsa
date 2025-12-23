@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Employee{
+    char SSN[15], Name[30], Dept[20], Desig[30];
+    float Sal;
+    long long Ph;
+    struct Employee *next,*prev;
+};
+
+struct Employee* newNode(){
+    struct Employee* n=malloc(sizeof(struct Employee));
+    scanf("%s %s %s %s %f %lld",
+          n->SSN,n->Name,n->Dept,n->Desig,&n->Sal,&n->Ph);
+    n->next=n->prev=NULL;
+    return n;
+}
+
+void insertEnd(struct Employee** h,struct Employee** t){
+    struct Employee* n=newNode();
+    if(!*h) *h=*t=n;
+    else{ n->prev=*t; (*t)->next=n; *t=n; }
+}
+
+void insertFront(struct Employee** h,struct Employee** t){
+    struct Employee* n=newNode();
+    if(!*h) *h=*t=n;
+    else{ n->next=*h; (*h)->prev=n; *h=n; }
+}
+
+void deleteEnd(struct Employee** h,struct Employee** t){
+    if(!*h) return;
+    if(*h==*t){ free(*h); *h=*t=NULL; }
+    else{ struct Employee* x=*t; *t=x->prev; (*t)->next=NULL; free(x); }
+}
+
+void deleteFront(struct Employee** h,struct Employee** t){
+    if(!*h) return;
+    if(*h==*t){ free(*h); *h=*t=NULL; }
+    else{ struct Employee* x=*h; *h=x->next; (*h)->prev=NULL; free(x); }
+}
+
+void display(struct Employee* h){
+    int c=0;
+    while(h){
+        printf("%s %s %s %s %.2f %lld\n",
+               h->SSN,h->Name,h->Dept,h->Desig,h->Sal,h->Ph);
+        h=h->next; c++;
+    }
+    printf("Nodes: %d\n",c);
+}
+
+void freeList(struct Employee* h){
+    while(h){ struct Employee* t=h; h=h->next; free(t); }
+}
+
+int main(){
+    struct Employee *h=NULL,*t=NULL;
+    int ch;
+    do{
+        printf("\n1.End 2.Show 3.Front 4.DelEnd 5.DelFront 6.Deque 7.Exit\n");
+        scanf("%d",&ch);
+        if(ch==1) insertEnd(&h,&t);
+        else if(ch==2) display(h);
+        else if(ch==3) insertFront(&h,&t);
+        else if(ch==4) deleteEnd(&h,&t);
+        else if(ch==5) deleteFront(&h,&t);
+        else if(ch==6){ insertFront(&h,&t); deleteEnd(&h,&t); }
+    }while(ch!=7);
+    freeList(h);
+    return 0;
+}

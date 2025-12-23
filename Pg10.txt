@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node{
+    int data;
+    struct Node *l,*r;
+};
+
+struct Node* newNode(int v){
+    struct Node* n=malloc(sizeof(struct Node));
+    n->data=v; n->l=n->r=NULL;
+    return n;
+}
+
+struct Node* insert(struct Node* r,int v){
+    if(!r) return newNode(v);
+    if(v<r->data) r->l=insert(r->l,v);
+    else if(v>r->data) r->r=insert(r->r,v);
+    return r;
+}
+
+void inorder(struct Node* r){
+    if(r){ inorder(r->l); printf("%d ",r->data); inorder(r->r); }
+}
+void preorder(struct Node* r){
+    if(r){ printf("%d ",r->data); preorder(r->l); preorder(r->r); }
+}
+void postorder(struct Node* r){
+    if(r){ postorder(r->l); postorder(r->r); printf("%d ",r->data); }
+}
+
+struct Node* search(struct Node* r,int k){
+    if(!r||r->data==k) return r;
+    return k<r->data?search(r->l,k):search(r->r,k);
+}
+
+void freeBST(struct Node* r){
+    if(r){ freeBST(r->l); freeBST(r->r); free(r); }
+}
+
+int main(){
+    struct Node* root=NULL;
+    int a[]={6,9,5,2,8,15,24,14,7,8,5,2},n=12,c,k;
+
+    for(int i=0;i<n;i++) root=insert(root,a[i]);
+
+    do{
+        printf("\n1.In 2.Pre 3.Post 4.Search 5.Exit\n");
+        scanf("%d",&c);
+        if(c==1) inorder(root);
+        else if(c==2) preorder(root);
+        else if(c==3) postorder(root);
+        else if(c==4){
+            scanf("%d",&k);
+            printf(search(root,k)?"Found\n":"Not Found\n");
+        }
+    }while(c!=5);
+
+    freeBST(root);
+    return 0;
+}

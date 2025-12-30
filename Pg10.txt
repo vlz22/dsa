@@ -1,61 +1,107 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Node{
+struct Node {
     int data;
-    struct Node *l,*r;
+    struct Node *left, *right;
 };
 
-struct Node* newNode(int v){
-    struct Node* n=malloc(sizeof(struct Node));
-    n->data=v; n->l=n->r=NULL;
+struct Node* createNode(int val) {
+    struct Node* n = malloc(sizeof(struct Node));
+    n->data = val;
+    n->left = n->right = NULL;
     return n;
 }
 
-struct Node* insert(struct Node* r,int v){
-    if(!r) return newNode(v);
-    if(v<r->data) r->l=insert(r->l,v);
-    else if(v>r->data) r->r=insert(r->r,v);
-    return r;
+struct Node* insert(struct Node* root, int val) {
+    if (!root) return createNode(val);
+    if (val < root->data) root->left = insert(root->left, val);
+    else if (val > root->data) root->right = insert(root->right, val);
+    return root;
 }
 
-void inorder(struct Node* r){
-    if(r){ inorder(r->l); printf("%d ",r->data); inorder(r->r); }
-}
-void preorder(struct Node* r){
-    if(r){ printf("%d ",r->data); preorder(r->l); preorder(r->r); }
-}
-void postorder(struct Node* r){
-    if(r){ postorder(r->l); postorder(r->r); printf("%d ",r->data); }
+void inorder(struct Node* r) {
+    if (!r) return;
+    inorder(r->left);
+    printf("%d ", r->data);
+    inorder(r->right);
 }
 
-struct Node* search(struct Node* r,int k){
-    if(!r||r->data==k) return r;
-    return k<r->data?search(r->l,k):search(r->r,k);
+void preorder(struct Node* r) {
+    if (!r) return;
+    printf("%d ", r->data);
+    preorder(r->left);
+    preorder(r->right);
 }
 
-void freeBST(struct Node* r){
-    if(r){ freeBST(r->l); freeBST(r->r); free(r); }
+void postorder(struct Node* r) {
+    if (!r) return;
+    postorder(r->left);
+    postorder(r->right);
+    printf("%d ", r->data);
 }
 
-int main(){
-    struct Node* root=NULL;
-    int a[]={6,9,5,2,8,15,24,14,7,8,5,2},n=12,c,k;
+struct Node* search(struct Node* r, int key) {
+    if (!r || r->data == key) return r;
+    return key < r->data ? search(r->left, key) : search(r->right, key);
+}
 
-    for(int i=0;i<n;i++) root=insert(root,a[i]);
+void freeBST(struct Node* r) {
+    if (!r) return;
+    freeBST(r->left);
+    freeBST(r->right);
+    free(r);
+}
 
-    do{
-        printf("\n1.In 2.Pre 3.Post 4.Search 5.Exit\n");
-        scanf("%d",&c);
-        if(c==1) inorder(root);
-        else if(c==2) preorder(root);
-        else if(c==3) postorder(root);
-        else if(c==4){
-            scanf("%d",&k);
-            printf(search(root,k)?"Found\n":"Not Found\n");
+int main() {
+    struct Node* root = NULL;
+    int choice, key;
+    int values[] = {6, 9, 5, 2, 8, 15, 24, 14, 7, 8, 5, 2};
+    int n = sizeof(values) / sizeof(values[0]);
+
+    for (int i = 0; i < n; i++)
+        root = insert(root, values[i]);
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Traverse the BST (Inorder)\n");
+        printf("2. Traverse the BST (Preorder)\n");
+        printf("3. Traverse the BST (Postorder)\n");
+        printf("4. Search for an element\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Inorder Traversal: ");
+                inorder(root);
+                printf("\n");
+                break;
+            case 2:
+                printf("Preorder Traversal: ");
+                preorder(root);
+                printf("\n");
+                break;
+            case 3:
+                printf("Postorder Traversal: ");
+                postorder(root);
+                printf("\n");
+                break;
+            case 4:
+                printf("Enter the element to search: ");
+                scanf("%d", &key);
+                printf("Element %d is %s in the BST.\n",
+                       key, search(root, key) ? "present" : "not present");
+                break;
+            case 5:
+                freeBST(root);
+                printf("Exiting the program.\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
         }
-    }while(c!=5);
+    } while (choice != 5);
 
-    freeBST(root);
     return 0;
 }
